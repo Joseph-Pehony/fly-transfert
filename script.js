@@ -39,14 +39,8 @@ function money(value, currency) {
 }
 
 function feeGabonToMorocco(amountFcfa) {
-  let percent = 0;
-  if (amountFcfa >= 5000 && amountFcfa <= 99999) percent = 3;
-  else if (amountFcfa >= 100000 && amountFcfa <= 300000) percent = 2;
-  else if (amountFcfa >= 300001 && amountFcfa <= 500000) percent = 1;
-  else percent = 0;
-
-  const fee = amountFcfa * percent / 100;
-  return { percent, fee };
+  // Gabon → Maroc : 0 % de frais pour tous les montants.
+  return { percent: 0, fee: 0 };
 }
 
 function bonusForChunk(chunkFcfa) {
@@ -124,7 +118,7 @@ function calculateGabonToMorocco(amount) {
 
     rows([
       { label: "💵 Montant envoyé", value: money(amount, "FCFA") },
-      { label: `Frais (${percent} %)`, value: `-${money(fee, "FCFA")}`, className: "negative" },
+      { label: "Frais de transfert", value: "0 FCFA (0 %)" },
       { label: "💵 Montant net converti", value: money(net, "FCFA") },
       { label: "📈 Taux appliqué", value: "1 FCFA = 0,015 MAD" }
     ]);
@@ -151,7 +145,7 @@ Je souhaite poursuivre l'opération.`);
   rows([
     { label: "💴 Montant souhaité", value: money(desiredMad, "MAD") },
     { label: "💵 Montant à envoyer", value: money(amountFcfa, "FCFA") },
-    { label: `Frais (${percent} %)`, value: `-${money(fee, "FCFA")}`, className: "negative" },
+    { label: "Frais de transfert", value: "0 FCFA (0 %)" },
     { label: "💵 Montant net converti", value: money(net, "FCFA") }
   ]);
 
@@ -176,7 +170,7 @@ function calculateMoroccoToGabon(amount) {
     rows([
       { label: "💴 Montant remis", value: money(amount, "MAD") },
       { label: "💵 Montant converti", value: money(baseFcfa, "FCFA") },
-      { label: "🎁 Prime Fly Transfert", value: `+${money(totalBonus, "FCFA")}`, className: "positive" },
+      { label: "🎁 Frais Airtel Money", value: `+${money(totalBonus, "FCFA")}`, className: "positive" },
       { label: "📈 Taux appliqué", value: "1 MAD = 61 FCFA" }
     ]);
 
@@ -186,7 +180,7 @@ function calculateMoroccoToGabon(amount) {
     setWhatsapp(`Bonjour Fly Transfert.
 Je souhaite effectuer un transfert Maroc → Gabon.
 Je remets ${money(amount, "MAD")}.
-Selon la simulation, le bénéficiaire recevra ${money(finalFcfa, "FCFA")}, incluant une Prime Fly Transfert de ${money(totalBonus, "FCFA")}.
+Selon la simulation, le bénéficiaire recevra ${money(finalFcfa, "FCFA")}, incluant une Frais Airtel Money de ${money(totalBonus, "FCFA")}.
 Je souhaite poursuivre l'opération.`);
     return;
   }
@@ -201,7 +195,7 @@ Je souhaite poursuivre l'opération.`);
   rows([
     { label: "💵 Montant souhaité", value: money(desiredBaseFcfa, "FCFA") },
     { label: "💴 Montant à remettre", value: money(amountMad, "MAD") },
-    { label: "🎁 Prime Fly Transfert", value: `+${money(totalBonus, "FCFA")}`, className: "positive" },
+    { label: "🎁 Frais Airtel Money", value: `+${money(totalBonus, "FCFA")}`, className: "positive" },
     { label: "📈 Taux appliqué", value: "1 MAD = 61 FCFA" }
   ]);
 
@@ -211,7 +205,7 @@ Je souhaite poursuivre l'opération.`);
   setWhatsapp(`Bonjour Fly Transfert.
 Je souhaite effectuer un transfert Maroc → Gabon.
 Je veux recevoir ${money(desiredBaseFcfa, "FCFA")}.
-Selon la simulation, je dois remettre ${money(amountMad, "MAD")} et le bénéficiaire recevra finalement ${money(finalFcfa, "FCFA")}, incluant une Prime Fly Transfert de ${money(totalBonus, "FCFA")}.
+Selon la simulation, je dois remettre ${money(amountMad, "MAD")} et le bénéficiaire recevra finalement ${money(finalFcfa, "FCFA")}, incluant une Frais Airtel Money de ${money(totalBonus, "FCFA")}.
 Je souhaite poursuivre l'opération.`);
 }
 
@@ -253,7 +247,7 @@ function updateUI() {
     el.currencyIcon.textContent = "💵";
     el.currencyIcon.textContent = "💵";
     el.amountInput.placeholder = "Ex : 300 000";
-    el.hint.textContent = "Les frais sont déduits du montant envoyé.";
+    el.hint.textContent = "Aucun frais de transfert : 0 % pour tous les montants.";
   } else if (isGaMa && !isSend) {
     el.amountLabel.textContent = "Montant que le bénéficiaire doit recevoir (MAD)";
     el.inputCurrency.textContent = "MAD";
@@ -265,12 +259,12 @@ function updateUI() {
     el.amountLabel.textContent = "Montant remis au Maroc (MAD)";
     el.inputCurrency.textContent = "MAD";
     el.amountInput.placeholder = "Ex : 15 000";
-    el.hint.textContent = "Une Prime Fly Transfert est ajoutée au montant reçu au Gabon.";
+    el.hint.textContent = "Une Frais Airtel Money est ajoutée au montant reçu au Gabon.";
   } else {
     el.amountLabel.textContent = "Montant souhaité au Gabon (FCFA)";
     el.inputCurrency.textContent = "FCFA";
     el.amountInput.placeholder = "Ex : 250 000";
-    el.hint.textContent = "La prime est ajoutée au montant que vous souhaitez recevoir.";
+    el.hint.textContent = "Les Frais Airtel Money sont ajoutés au montant que vous souhaitez recevoir.";
   }
 
   el.amountInput.value = "";
